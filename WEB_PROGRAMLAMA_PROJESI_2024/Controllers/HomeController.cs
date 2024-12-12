@@ -13,12 +13,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
+        public IActionResult Anasayfa()
         {
             return View();
         }
