@@ -18,6 +18,10 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
             return View();
         }
 
+        public IActionResult Tarihce()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
