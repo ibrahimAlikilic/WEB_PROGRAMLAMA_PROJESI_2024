@@ -22,10 +22,22 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
         {
             return View();
         }
-
-        public IActionResult Login()
+        public IActionResult AdminPanel()
         {
+
             return View();
+        }
+        public IActionResult Login(string username, string password)
+        {
+            if (username == "b211210091@sakarya.edu.tr" && password == "sau")
+            {
+                return RedirectToAction("AdminPanel");
+            }
+            else
+            {
+                ViewBag.Error = "Kullanýcý adý veya þifre hatalý.";
+                return View();
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
