@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using WEB_PROGRAMLAMA_PROJESI_2024.Data;
@@ -115,6 +116,74 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
 
             // Model geçersizse formu ayný sayfada göster
             return View(salon);
+        }
+        public IActionResult IslemEkleme()
+        {
+            ViewBag.SalonList = new SelectList(_context.Salons.ToList(), "SalonId", "SalonAdi");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+       
+        public IActionResult IslemEkleme(Islem islem)
+        {
+            ViewBag.SalonList = new SelectList(_context.Salons.ToList(), "SalonId", "SalonAdi");
+
+           
+                try
+                {
+                    // Veritabanýna ekle
+                    _context.Islems.Add(islem);
+                    _context.SaveChanges();
+
+                    TempData["SuccessMessage"] = "Ýþlem baþarýyla eklendi!";
+                    return RedirectToAction("IslemEkleme");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError("Ýþlem eklenirken bir hata oluþtu: " + ex.Message);
+                    TempData["ErrorMessage"] = "Bir hata oluþtu: " + ex.Message;
+                }
+           
+        
+            return View(islem);
+        }
+        [HttpGet]
+        public IActionResult CalisanEkleme()
+        {
+            ViewBag.SalonList = new SelectList(_context.Salons.ToList(), "SalonId", "SalonAdi");
+            ViewBag.IslemList = new SelectList(_context.Islems.ToList(), "IslemId", "IslemAdi");
+            ViewBag.RolList = new SelectList(_context.Rols.ToList(), "RolId", "RolAdi");
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CalisanEkleme(Calisan calisan)
+        {
+            ViewBag.SalonList = new SelectList(_context.Salons.ToList(), "SalonId", "SalonAdi");
+            ViewBag.IslemList = new SelectList(_context.Islems.ToList(), "IslemId", "IslemAdi");
+            ViewBag.RolList = new SelectList(_context.Rols.ToList(), "RolId", "RolAdi");
+
+            try
+            {
+                // Veritabanýna ekle
+                _context.Calisans.Add(calisan);
+                _context.SaveChanges();
+
+                TempData["SuccessMessage"] = "Çalýþan baþarýyla eklendi!";
+                return RedirectToAction("CalisanEkleme");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Çalýþan eklenirken bir hata oluþtu: " + ex.Message);
+                TempData["ErrorMessage"] = "Bir hata oluþtu: " + ex.Message;
+            }
+
+            return View(calisan);
         }
 
         public IActionResult Login(string username, string password)
