@@ -37,11 +37,21 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Migrations
                     b.Property<int>("IslemId")
                         .HasColumnType("int");
 
+                    b.Property<string>("KullaniciAdi")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<int>("RolId")
                         .HasColumnType("int");
 
                     b.Property<int>("SalonId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Sifre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("CalisanId");
 

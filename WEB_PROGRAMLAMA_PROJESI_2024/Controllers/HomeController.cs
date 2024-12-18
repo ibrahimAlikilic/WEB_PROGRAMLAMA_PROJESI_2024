@@ -11,6 +11,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context; // DbContext
+        public Calisan user;
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
@@ -28,14 +29,47 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
         }
         public IActionResult AdminPanel()
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetInt32("UserRole");
 
-            return View();
+            if (userId != null && userRole != null)
+            {
+                // Sadece adminler bu sayfaya eriþebilir
+                if (userRole == 1)
+                {
+                    return View();
+                }
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                ViewBag.Error = "Oturum bulunamadý. Lütfen tekrar giriþ yapýnýz.";
+                return RedirectToAction("Login", "Home");
+            }
+
+
         }
 
         public IActionResult RolEkleme()
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetInt32("UserRole");
 
-            return View();
+            if (userId != null && userRole != null)
+            {
+                // Sadece adminler bu sayfaya eriþebilir
+                if (userRole == 1)
+                {
+
+                    return View();
+                }
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                ViewBag.Error = "Oturum bulunamadý. Lütfen tekrar giriþ yapýnýz.";
+                return RedirectToAction("Login", "Home");
+            }
         }
 
         [HttpPost]
@@ -44,32 +78,32 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
         {
             // Model doðrulama kontrolü
 
-                try
-                {
-                    // Yeni rol kaydýný veritabanýna ekleme
-                    _context.Rols.Add(rol);
+            try
+            {
+                // Yeni rol kaydýný veritabanýna ekleme
+                _context.Rols.Add(rol);
 
-                    // Veritabanýna deðiþiklikleri kaydetme
-                    _context.SaveChanges();
+                // Veritabanýna deðiþiklikleri kaydetme
+                _context.SaveChanges();
 
-                    // Baþarý mesajýný TempData ile saklama
-                    TempData["SuccessMessage"] = "Rol baþarýyla eklendi!";
+                // Baþarý mesajýný TempData ile saklama
+                TempData["SuccessMessage"] = "Rol baþarýyla eklendi!";
 
-                    // Rol listeleme veya baþka bir sayfaya yönlendirme
-                    return RedirectToAction("RolEkleme");
-                }
-                catch (Exception ex)
-                {
-                    // Hata durumunda loglama (opsiyonel)
-                    _logger.LogError("Rol eklenirken bir hata oluþtu: " + ex.Message);
+                // Rol listeleme veya baþka bir sayfaya yönlendirme
+                return RedirectToAction("RolEkleme");
+            }
+            catch (Exception ex)
+            {
+                // Hata durumunda loglama (opsiyonel)
+                _logger.LogError("Rol eklenirken bir hata oluþtu: " + ex.Message);
 
-                    // Hata mesajýný TempData ile saklama
-                    TempData["ErrorMessage"] = "Bir hata oluþtu: " + ex.Message;
+                // Hata mesajýný TempData ile saklama
+                TempData["ErrorMessage"] = "Bir hata oluþtu: " + ex.Message;
 
-                    // Hata durumunda ayný form sayfasýna geri dönme
-                    return View(rol);
-                }
-            
+                // Hata durumunda ayný form sayfasýna geri dönme
+                return View(rol);
+            }
+
 
             // Model geçersizse ayný sayfaya geri dön
             return View(rol);
@@ -78,85 +112,133 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
 
         public IActionResult SalonEkleme()
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetInt32("UserRole");
 
-            return View();
+            if (userId != null && userRole != null)
+            {
+                // Sadece adminler bu sayfaya eriþebilir
+                if (userRole == 1)
+                {
+                    return View();
+                }
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                ViewBag.Error = "Oturum bulunamadý. Lütfen tekrar giriþ yapýnýz.";
+                return RedirectToAction("Login", "Home");
+            }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult SalonEkleme(Salon salon)
         {
             // Model doðrulama kontrolü
-           
-                try
-                {
-                    // Yeni salon kaydýný veritabanýna ekleme
-                    _context.Salons.Add(salon);
 
-                    // Deðiþiklikleri veritabanýna kaydetme
-                    _context.SaveChanges();
+            try
+            {
+                // Yeni salon kaydýný veritabanýna ekleme
+                _context.Salons.Add(salon);
 
-                    // Baþarý mesajýný TempData ile saklama
-                    TempData["SuccessMessage"] = "Salon baþarýyla eklendi!";
+                // Deðiþiklikleri veritabanýna kaydetme
+                _context.SaveChanges();
 
-                    // Baþka bir sayfaya veya ayný sayfaya yönlendirme
-                    return RedirectToAction("SalonEkleme");
-                }
-                catch (Exception ex)
-                {
-                    // Hata durumunda loglama (opsiyonel)
-                    _logger.LogError("Salon eklenirken bir hata oluþtu: " + ex.Message);
+                // Baþarý mesajýný TempData ile saklama
+                TempData["SuccessMessage"] = "Salon baþarýyla eklendi!";
 
-                    // Hata mesajýný TempData ile saklama
-                    TempData["ErrorMessage"] = "Bir hata oluþtu: " + ex.Message;
+                // Baþka bir sayfaya veya ayný sayfaya yönlendirme
+                return RedirectToAction("SalonEkleme");
+            }
+            catch (Exception ex)
+            {
+                // Hata durumunda loglama (opsiyonel)
+                _logger.LogError("Salon eklenirken bir hata oluþtu: " + ex.Message);
 
-                    // Hata durumunda ayný form sayfasýna geri dönme
-                    return View(salon);
-                }
-            
+                // Hata mesajýný TempData ile saklama
+                TempData["ErrorMessage"] = "Bir hata oluþtu: " + ex.Message;
+
+                // Hata durumunda ayný form sayfasýna geri dönme
+                return View(salon);
+            }
+
 
             // Model geçersizse formu ayný sayfada göster
             return View(salon);
         }
         public IActionResult IslemEkleme()
         {
-            ViewBag.SalonList = new SelectList(_context.Salons.ToList(), "SalonId", "SalonAdi");
-            return View();
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetInt32("UserRole");
+
+            if (userId != null && userRole != null)
+            {
+                // Sadece adminler bu sayfaya eriþebilir
+                if (userRole == 1)
+                {
+                    ViewBag.SalonList = new SelectList(_context.Salons.ToList(), "SalonId", "SalonAdi");
+                    return View();
+                }
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                ViewBag.Error = "Oturum bulunamadý. Lütfen tekrar giriþ yapýnýz.";
+                return RedirectToAction("Login", "Home");
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
 
-       
+
         public IActionResult IslemEkleme(Islem islem)
         {
             ViewBag.SalonList = new SelectList(_context.Salons.ToList(), "SalonId", "SalonAdi");
 
-           
-                try
-                {
-                    // Veritabanýna ekle
-                    _context.Islems.Add(islem);
-                    _context.SaveChanges();
 
-                    TempData["SuccessMessage"] = "Ýþlem baþarýyla eklendi!";
-                    return RedirectToAction("IslemEkleme");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError("Ýþlem eklenirken bir hata oluþtu: " + ex.Message);
-                    TempData["ErrorMessage"] = "Bir hata oluþtu: " + ex.Message;
-                }
-           
-        
+            try
+            {
+                // Veritabanýna ekle
+                _context.Islems.Add(islem);
+                _context.SaveChanges();
+
+                TempData["SuccessMessage"] = "Ýþlem baþarýyla eklendi!";
+                return RedirectToAction("IslemEkleme");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Ýþlem eklenirken bir hata oluþtu: " + ex.Message);
+                TempData["ErrorMessage"] = "Bir hata oluþtu: " + ex.Message;
+            }
+
+
             return View(islem);
         }
         [HttpGet]
         public IActionResult CalisanEkleme()
         {
-            ViewBag.SalonList = new SelectList(_context.Salons.ToList(), "SalonId", "SalonAdi");
-            ViewBag.IslemList = new SelectList(_context.Islems.ToList(), "IslemId", "IslemAdi");
-            ViewBag.RolList = new SelectList(_context.Rols.ToList(), "RolId", "RolAdi");
-            return View();
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetInt32("UserRole");
+
+            if (userId != null && userRole != null)
+            {
+                // Sadece adminler bu sayfaya eriþebilir
+                if (userRole == 1)
+                {
+
+                    ViewBag.SalonList = new SelectList(_context.Salons.ToList(), "SalonId", "SalonAdi");
+                    ViewBag.IslemList = new SelectList(_context.Islems.ToList(), "IslemId", "IslemAdi");
+                    ViewBag.RolList = new SelectList(_context.Rols.ToList(), "RolId", "RolAdi");
+                    return View();
+                }
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                ViewBag.Error = "Oturum bulunamadý. Lütfen tekrar giriþ yapýnýz.";
+                return RedirectToAction("Login", "Home");
+            }
         }
 
 
@@ -188,15 +270,35 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
 
         public IActionResult Login(string username, string password)
         {
-            if (username == "b211210091@sakarya.edu.tr" && password == "sau")
+            user = _context.Calisans
+         .FirstOrDefault(u => u.KullaniciAdi == username && u.Sifre == password);
+
+            if (user != null)
             {
-                return RedirectToAction("AdminPanel");
+                // Kullanýcý bilgilerini oturuma ekle
+                HttpContext.Session.SetInt32("UserId", user.CalisanId);
+                HttpContext.Session.SetInt32("UserRole", user.RolId);
+
+                // Admin paneline yönlendirme
+                if (user.RolId == 1)
+                {
+                    return RedirectToAction("AdminPanel", "Home");
+                }
+                return RedirectToAction("Login", "Home");
             }
             else
             {
-                ViewBag.Error = "Kullanýcý adý veya þifre hatalý.";
+                ViewBag.Error = "Kullanýcý adý veya þifre hatalý!";
                 return View();
             }
+        }
+
+
+        // button eklenecek Laout'a
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); // Tüm oturum verilerini temizle
+            return RedirectToAction("Index", "Home");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

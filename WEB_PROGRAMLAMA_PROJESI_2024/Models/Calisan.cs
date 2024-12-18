@@ -25,5 +25,14 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Models
         public Rol Rol { get; set; }
         [Required]
         public string AdSoyad { get; set; }
+
+        // Yeni eklenen alanlar
+        [Required]
+        [StringLength(50)] // Kullanıcı adı için maksimum karakter sınırı
+        public string KullaniciAdi { get; set; }
+
+        [Required]
+        [StringLength(100)] // Şifre için maksimum karakter sınırı
+        public string Sifre { get; set; }
     }
 }
