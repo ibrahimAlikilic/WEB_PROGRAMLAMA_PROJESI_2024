@@ -5,7 +5,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Data
 {
     public class ApplicationDbContext:DbContext
     {
-
+          
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
