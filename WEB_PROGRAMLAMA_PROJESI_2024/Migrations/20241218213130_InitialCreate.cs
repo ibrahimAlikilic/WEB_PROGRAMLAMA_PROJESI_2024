@@ -86,7 +86,9 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Migrations
                     IslemId = table.Column<int>(type: "int", nullable: false),
                     SalonId = table.Column<int>(type: "int", nullable: false),
                     RolId = table.Column<int>(type: "int", nullable: false),
-                    AdSoyad = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    AdSoyad = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    KullaniciAdi = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Sifre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
