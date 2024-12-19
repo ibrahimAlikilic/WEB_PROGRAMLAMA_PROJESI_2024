@@ -22,7 +22,7 @@
                         </div>
                         <div class="d-flex justify-content-between">
                             <button type="submit" class="btn btn-primary w-45">Login</button>
-                            <a href="/Home/Register" class="btn btn-secondary w-45">Kayıt Ol</a>
+                           
                         </div>
                     </form>
                     <p class="text-danger text-center mt-2">@ViewBag.Error</p>
@@ -38,7 +38,8 @@
                         <i class="fa-solid fa-user text-dark fs-1"></i>
                         <p>KULLANICI PANEL</p>
                     </div>
-                    <form method="post" action="/Home/UserLogin">
+                    <form method="post" action="/Home/RandevuEkleme">
+                        @Html.AntiForgeryToken()
                         <div class="mb-3">
                             <input type="text" name="username" class="form-control" placeholder="Email" required />
                         </div>
@@ -47,7 +48,7 @@
                         </div>
                         <div class="d-flex justify-content-between">
                             <button type="submit" class="btn btn-primary w-45">Login</button>
-                            <a href="/Home/KayıtOl" class="btn btn-secondary w-45">Kayıt Ol</a>
+                            <a href="/Home/MusteriEkleme" class="btn btn-secondary w-45">Kayıt Ol</a>
                         </div>
                     </form>
                     <p class="text-danger text-center mt-2">@ViewBag.UserError</p>

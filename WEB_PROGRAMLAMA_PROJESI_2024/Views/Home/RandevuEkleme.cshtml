@@ -1,0 +1,27 @@
+﻿
+@{
+    ViewData["Title"] = "RandevuEkleme";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">  
+    <div class="row">
+        <div class="col-5">
+            <button onclick="window.location.href='@Url.Action("RandevuGoruntuleme", "Home")'" class="btn btn-primary">
+              RANDEVUNUZU GORUNTULEMEK İCİN TIKLAYINIZ.
+            </button>
+        </div>
+
+
+        <div class="col-5">
+            <button onclick="window.location.href='@Url.Action("RandevuAlma", "Home")'" class="btn btn-primary">
+                RANDEVU ALMAK İCİN TIKLAYIN
+            </button>
+        </div>
+
+
+        
+    </div>
+
+</div>
+

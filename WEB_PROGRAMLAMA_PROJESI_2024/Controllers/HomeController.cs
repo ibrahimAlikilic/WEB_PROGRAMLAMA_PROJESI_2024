@@ -301,6 +301,107 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+
+        public IActionResult MusteriEkleme()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult MusteriEkleme(Musteri musteri)
+        {
+            // Model doðrulama kontrolü
+
+            try
+            {
+                // Yeni Musteri kaydýný veritabanýna ekleme
+                _context.Musteris.Add(musteri);
+
+                // Veritabanýna deðiþiklikleri kaydetme
+                _context.SaveChanges();
+
+                // Baþarý mesajýný TempData ile saklama
+                TempData["SuccessMessage"] = "Rol baþarýyla eklendi!";
+
+                // Rol listeleme veya baþka bir sayfaya yönlendirme
+                return RedirectToAction("RolEkleme");
+            }
+            catch (Exception ex)
+            {
+                // Hata durumunda loglama (opsiyonel)
+                _logger.LogError("Rol eklenirken bir hata oluþtu: " + ex.Message);
+
+                // Hata mesajýný TempData ile saklama
+                TempData["ErrorMessage"] = "Bir hata oluþtu: " + ex.Message;
+
+                // Hata durumunda ayný form sayfasýna geri dönme
+                return View(musteri);
+            }
+
+
+            // Model geçersizse ayný sayfaya geri dön
+            return View(musteri);
+        }
+
+
+        public IActionResult RandevuEkleme()
+        {
+            // Oturum açmýþ kullanýcý var mý kontrol et
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                TempData["ErrorMessage"] = "Lütfen giriþ yapýn!";
+                return RedirectToAction("Login"); // Kullanýcýyý giriþ sayfasýna yönlendir
+            }
+            else
+            {
+                return View();
+            }
+
+            return RedirectToAction("Login");
+           
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RandevuEkleme(string username, string password)
+        {
+            try
+            {
+                // Kullanýcýyý email ve þifreye göre ara
+                var user = _context.Musteris
+                    .FirstOrDefault(u => u.Email == username && u.MusteriSifre == password);
+
+                if (user != null) // Kullanýcý bulundu
+                {
+                    // Oturuma kullanýcý bilgilerini ekle
+                    HttpContext.Session.SetInt32("UserId", user.MusteriId);
+                    HttpContext.Session.SetString("UserName", user.Email);
+
+                    TempData["SuccessMessage"] = "Baþarýyla giriþ yaptýnýz!";
+
+                    // Giriþ sonrasý yönlendirme
+                    return RedirectToAction("RandevuEkleme"); // Örneðin ana sayfaya yönlendirme
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Email veya þifre hatalý!";
+                    return RedirectToAction("Login"); // Kullanýcýyý tekrar giriþ sayfasýna yönlendir
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Randevu alýrken bir hata oluþtu: {ex.Message}");
+                TempData["ErrorMessage"] = "Bir hata oluþtu. Lütfen tekrar deneyin.";
+                return RedirectToAction("Login"); // Hata durumunda login sayfasýna yönlendirme
+            }
+        }
+   
+
+
+
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
