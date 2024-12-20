@@ -399,6 +399,27 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
         }
    
 
+      
+        public IActionResult RandevuGoruntuleme()
+        {
+            // Oturumdan kullanýcý ID'sini al
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                TempData["ErrorMessage"] = "Lütfen giriþ yapýn!";
+                return RedirectToAction("Login");
+            }
+
+            // Kullanýcýya ait randevularý getir
+            var randevular = _context.Randevus
+                .Include(r => r.Musteri)
+                .Include(r => r.Calisan)
+                .Include(r => r.Islem)
+                .Where(r => r.MusteriId == userId)
+                .ToList();
+
+            return View(randevular);
+        }
 
 
 
