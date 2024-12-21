@@ -4,32 +4,39 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-<div class="container">
+<h1 class="text-center  text-white">HOSGELDİN ADMİN</h1>
+<div class="container mt-5">
     <div class="row">
-        <div class="col-3">
+        <div class="col-6 pt-5">
             <button onclick="window.location.href='@Url.Action("RolEkleme", "Home")'" class="btn btn-primary">
                 ROL EKLEMEK İCİN TIKLAYIN
             </button>
         </div>
 
 
-        <div class="col-3">
+        <div class="col-6 pt-5">
             <button onclick="window.location.href='@Url.Action("SalonEkleme", "Home")'" class="btn btn-primary">
                 SALON EKLEMEK İCİN TIKLAYIN
             </button>
         </div>
       
 
-        <div class="col-3">
+        <div class="col-6 pt-5">
             <button onclick="window.location.href='@Url.Action("IslemEkleme", "Home")'" class="btn btn-primary">
                 ISLEM EKLEMEK İCİN TIKLAYIN
             </button>
         </div>
 
-        <div class="col-3">
+        <div class="col-6 pt-5">
             <button onclick="window.location.href='@Url.Action("CalisanEkleme", "Home")'" class="btn btn-primary">
                 CALİSAN EKLEMEK İCİN TIKLAYIN
+            </button>
+        </div>
+
+
+        <div class="col-6 pt-5">
+            <button onclick="window.location.href='@Url.Action("TumRandevularıGoruntule", "Home")'" class="btn btn-primary">
+               TUM RANDEVULARI GORUNTULEMEK İCİN TIKLAYIN
             </button>
         </div>
     </div>

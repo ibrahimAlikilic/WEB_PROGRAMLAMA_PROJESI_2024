@@ -24,7 +24,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Models
 
         public Islem Islem { get; set; }
         [Required]
-        public DateOnly Tarih { get; set; }
+        public DateTime Tarih { get; set; }
         [Required]
         public string SaatAraligi { get; set; }
 

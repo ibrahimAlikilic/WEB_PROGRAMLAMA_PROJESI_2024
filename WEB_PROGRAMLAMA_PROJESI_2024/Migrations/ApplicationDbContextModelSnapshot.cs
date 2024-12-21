@@ -145,8 +145,8 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("Tarih")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("Tarih")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("RandevuId");
 

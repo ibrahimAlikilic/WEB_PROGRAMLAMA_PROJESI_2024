@@ -7,6 +7,8 @@ using WEB_PROGRAMLAMA_PROJESI_2024.Models;
 
 namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
 {
+
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -90,7 +92,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 TempData["SuccessMessage"] = "Rol baþarýyla eklendi!";
 
                 // Rol listeleme veya baþka bir sayfaya yönlendirme
-                return RedirectToAction("RolEkleme");
+                return RedirectToAction("AdminPanel");
             }
             catch (Exception ex)
             {
@@ -148,7 +150,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 TempData["SuccessMessage"] = "Salon baþarýyla eklendi!";
 
                 // Baþka bir sayfaya veya ayný sayfaya yönlendirme
-                return RedirectToAction("SalonEkleme");
+                return RedirectToAction("AdminPanel");
             }
             catch (Exception ex)
             {
@@ -204,7 +206,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 _context.SaveChanges();
 
                 TempData["SuccessMessage"] = "Ýþlem baþarýyla eklendi!";
-                return RedirectToAction("IslemEkleme");
+                return RedirectToAction("AdminPanel");
             }
             catch (Exception ex)
             {
@@ -257,7 +259,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 _context.SaveChanges();
 
                 TempData["SuccessMessage"] = "Çalýþan baþarýyla eklendi!";
-                return RedirectToAction("CalisanEkleme");
+                return RedirectToAction("AdminPanel");
             }
             catch (Exception ex)
             {
@@ -298,7 +300,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear(); // Tüm oturum verilerini temizle
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Anasayfa", "Home");
         }
 
 
@@ -324,7 +326,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 TempData["SuccessMessage"] = "Rol baþarýyla eklendi!";
 
                 // Rol listeleme veya baþka bir sayfaya yönlendirme
-                return RedirectToAction("RolEkleme");
+                return RedirectToAction("Login");
             }
             catch (Exception ex)
             {
@@ -348,18 +350,15 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
         {
             // Oturum açmýþ kullanýcý var mý kontrol et
             var userId = HttpContext.Session.GetInt32("UserId");
+
             if (userId == null)
             {
                 TempData["ErrorMessage"] = "Lütfen giriþ yapýn!";
                 return RedirectToAction("Login"); // Kullanýcýyý giriþ sayfasýna yönlendir
             }
-            else
-            {
-                return View();
-            }
 
-            return RedirectToAction("Login");
-           
+            // Kullanýcý giriþ yapmýþsa, randevu ekleme sayfasýný göster
+            return View();
         }
 
 
@@ -376,13 +375,13 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 if (user != null) // Kullanýcý bulundu
                 {
                     // Oturuma kullanýcý bilgilerini ekle
-                    HttpContext.Session.SetInt32("UserId", user.MusteriId);
-                    HttpContext.Session.SetString("UserName", user.Email);
+                    HttpContext.Session.SetInt32("UserId", user.MusteriId);  // Kullanýcý ID'sini sakla
+                    HttpContext.Session.SetString("UserName", user.Email);   // Kullanýcý email'ini sakla
 
                     TempData["SuccessMessage"] = "Baþarýyla giriþ yaptýnýz!";
 
                     // Giriþ sonrasý yönlendirme
-                    return RedirectToAction("RandevuEkleme"); // Örneðin ana sayfaya yönlendirme
+                    return RedirectToAction("RandevuEkleme"); // Giriþ baþarýlýysa randevu ekleme sayfasýna yönlendir
                 }
                 else
                 {
@@ -397,9 +396,9 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 return RedirectToAction("Login"); // Hata durumunda login sayfasýna yönlendirme
             }
         }
-   
 
-      
+
+
         public IActionResult RandevuGoruntuleme()
         {
             // Oturumdan kullanýcý ID'sini al
@@ -422,6 +421,128 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
         }
 
 
+        public IActionResult RandevuAlma()
+        {
+            // Ýþlemleri Dropdown için getir
+            var islemler = _context.Islems.ToList();
+            ViewBag.Islemler = new SelectList(islemler, "IslemId", "IslemAdi");
+
+            return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult RandevuAlma(int islemId, int calisanId, DateTime tarih, string saatAraligi)
+        {
+            // Giriþ yapan kullanýcýnýn kimliðini al
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                ViewBag.Hata = "Lütfen giriþ yapýn.";
+                return RedirectToAction("Login");
+            }
+
+            // Kullanýcýnýn müþteri ID'sini almak için kullanýcýyý sorgulama
+            var musteri = _context.Musteris.FirstOrDefault(m => m.MusteriId == userId.Value);
+
+            if (musteri == null)
+            {
+                ViewBag.Hata = "Müþteri bilgileri bulunamadý.";
+                return RedirectToAction("Login");
+            }
+
+            // Çakýþma kontrolü
+            var mevcutRandevu = _context.Randevus
+                .FirstOrDefault(r => r.CalisanId == calisanId && r.Tarih.Date == tarih.Date && r.SaatAraligi == saatAraligi);
+
+            if (mevcutRandevu != null)
+            {
+                ViewBag.Hata = "Bu saat aralýðýnda seçtiðiniz çalýþan için randevu dolu.";
+                return RedirectToAction("RandevuAlma");
+            }
+
+            // Yeni randevu ekle
+            var yeniRandevu = new Randevu
+            {
+                MusteriId = musteri.MusteriId, // Müþteri ID'sini kullan
+                CalisanId = calisanId,
+                IslemId = islemId,
+                Tarih = tarih,
+                SaatAraligi = saatAraligi,
+                Onay = false
+            };
+
+            _context.Randevus.Add(yeniRandevu);
+            _context.SaveChanges();
+
+            return RedirectToAction("RandevuGoruntuleme");
+        }
+
+        public IActionResult GetCalisanlar(int islemId)
+        {
+            var calisanlar = _context.Calisans
+                .Where(c => c.IslemId == islemId)
+                .Select(c => new
+                {
+                    calisanId = c.CalisanId,
+                    adSoyad = c.AdSoyad
+                })
+                .ToList();
+
+            return Json(calisanlar);
+        }
+
+        [HttpPost]
+        public IActionResult SilRandevu(int randevuId)
+        {
+            var randevu = _context.Randevus.FirstOrDefault(r => r.RandevuId == randevuId);
+
+            if (randevu != null)
+            {
+                _context.Randevus.Remove(randevu);
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "Randevunuz baþarýyla silindi.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Randevu bulunamadý.";
+            }
+
+            return RedirectToAction("RandevuGoruntuleme");
+        }
+
+
+        public IActionResult TumRandevularýGoruntule()
+        {
+            var tumRandevular = _context.Randevus
+                .Include(r => r.Musteri)  // Müþteri bilgilerini de dahil et
+                .Include(r => r.Calisan)  // Çalýþan bilgilerini de dahil et
+                .Include(r => r.Islem)    // Ýþlem bilgilerini de dahil et
+                .ToList();
+
+            return View(tumRandevular);
+        }
+
+
+        public IActionResult Onayla(int randevuId)
+        {
+            // Randevuyu veritabanýndan bul
+            var randevu = _context.Randevus.FirstOrDefault(r => r.RandevuId == randevuId);
+
+            if (randevu != null)
+            {
+                // Randevu onayýný deðiþtir
+                randevu.Onay = true;
+
+                // Veritabanýnda deðiþiklikleri kaydet
+                _context.SaveChanges();
+            }
+
+
+            // Tüm randevularý görüntüle
+            return RedirectToAction("TumRandevularýGoruntule");
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -1,15 +1,15 @@
 ﻿@model List<WEB_PROGRAMLAMA_PROJESI_2024.Models.Randevu>
 
 @{
-    ViewData["Title"] = "Randevularım";
+    ViewData["Title"] = "Tüm Randevular";
 }
 
-<h2 class="text-white">Randevularım</h2>
+<h2 class="text-white">Tüm Randevular</h2>
 
 @if (!Model.Any())
 {
     <div class="alert alert-warning">
-        Henüz bir randevunuz bulunmamaktadır.
+        Henüz hiç randevu bulunmamaktadır.
     </div>
 }
 else
@@ -23,7 +23,7 @@ else
                 <th>Tarih</th>
                 <th>Saat</th>
                 <th>Onay Durumu</th>
-                <th>İşlemler</th>
+                <th>İşlem</th>
             </tr>
         </thead>
         <tbody>
@@ -39,10 +39,10 @@ else
                         @(randevu.Onay ? "Onaylandı" : "Onay Bekliyor")
                     </td>
                     <td>
-                        <form method="post" action="@Url.Action("SilRandevu", "Home")" onsubmit="return confirm('Randevuyu silmek istediğinizden emin misiniz?');">
-                            <input type="hidden" name="randevuId" value="@randevu.RandevuId" />
-                            <button type="submit" class="btn btn-danger btn-sm">Sil</button>
-                        </form>
+                        @if (!randevu.Onay)
+                        {
+                            <a href="@Url.Action("Onayla", "Home", new { randevuId = randevu.RandevuId })" class="btn btn-success">Onayla</a>
+                        }
                     </td>
                 </tr>
             }

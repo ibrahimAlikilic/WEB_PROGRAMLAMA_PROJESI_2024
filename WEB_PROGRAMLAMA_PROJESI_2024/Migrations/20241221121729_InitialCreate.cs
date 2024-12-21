@@ -122,7 +122,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Migrations
                     MusteriId = table.Column<int>(type: "int", nullable: false),
                     CalisanId = table.Column<int>(type: "int", nullable: false),
                     IslemId = table.Column<int>(type: "int", nullable: false),
-                    Tarih = table.Column<DateOnly>(type: "date", nullable: false),
+                    Tarih = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SaatAraligi = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Onay = table.Column<bool>(type: "bit", nullable: false)
                 },

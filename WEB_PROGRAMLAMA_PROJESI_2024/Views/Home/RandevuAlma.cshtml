@@ -1,0 +1,85 @@
+﻿@model WEB_PROGRAMLAMA_PROJESI_2024.Models.Randevu
+
+@{
+    ViewData["Title"] = "Randevu Alma";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container text-white">
+    <h2>Randevu Alma</h2>
+    <form method="post" action="/Home/RandevuAlma">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label for="islemId">İşlem Seçiniz:</label>
+            <select id="islemId" name="islemId" class="form-control" onchange="getCalisanlar(this.value)" required>
+                <option value="">İşlem Seçiniz</option>
+                @foreach (var item in ViewBag.Islemler)
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="calisanId">Çalışan Seçiniz:</label>
+            <select id="calisanId" name="calisanId" class="form-control" required>
+                <option value="">Önce işlem seçiniz...</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="tarih">Tarih Seçiniz:</label>
+            <input type="date" id="tarih" name="tarih" class="form-control"
+                   min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                   max="@DateTime.Now.AddDays(14).ToString("yyyy-MM-dd")" required />
+        </div>
+
+        <div class="form-group">
+            <label for="saatAraligi">Saat Aralığı Seçiniz:</label>
+            <select id="saatAraligi" name="saatAraligi" class="form-control" required>
+                <option value="09:00-10:00">09:00-10:00</option>
+                <option value="10:00-11:00">10:00-11:00</option>
+                <option value="11:00-12:00">11:00-12:00</option>
+                <option value="12:00-13:00">12:00-13:00</option>
+                <option value="13:00-14:00">13:00-14:00</option>
+                <option value="14:00-15:00">14:00-15:00</option>
+                <!-- Diğer saat aralıkları -->
+            </select>
+        </div>
+
+       <div class="pt-3">
+            <button type="submit" class="btn btn-primary">Randevu Al</button>
+       </div>
+    </form>
+
+    @if (!string.IsNullOrEmpty(ViewBag.Hata))
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.Hata
+            
+        </div>
+        <div class="alert alert-danger" role="alert">
+           <p>Randevu Boslugu bu zaman diliminde yoktur.</p>
+
+        </div>
+    }
+
+</div>
+
+<script>
+    function getCalisanlar(islemId) {
+        fetch(`/Home/GetCalisanlar?islemId=${islemId}`)
+            .then(response => response.json())
+            .then(data => {
+                const calisanDropdown = document.getElementById("calisanId");
+                calisanDropdown.innerHTML = '<option value="">Çalışan Seçiniz</option>';
+                data.forEach(calisan => {
+                    const option = document.createElement("option");
+                    option.value = calisan.calisanId;
+                    option.textContent = calisan.adSoyad;
+                    calisanDropdown.appendChild(option);
+                });
+            });
+    }
+</script>
