@@ -165,7 +165,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
 
             // Model geçersizse formu ayný sayfada göster
             return View(salon);
-        }
+        }  
         public IActionResult IslemEkleme()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
