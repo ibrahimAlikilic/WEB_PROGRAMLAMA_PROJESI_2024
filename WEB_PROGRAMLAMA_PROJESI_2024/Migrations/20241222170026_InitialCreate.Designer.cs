@@ -12,7 +12,7 @@ using WEB_PROGRAMLAMA_PROJESI_2024.Data;
 namespace WEB_PROGRAMLAMA_PROJESI_2024.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241221121729_InitialCreate")]
+    [Migration("20241222170026_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
