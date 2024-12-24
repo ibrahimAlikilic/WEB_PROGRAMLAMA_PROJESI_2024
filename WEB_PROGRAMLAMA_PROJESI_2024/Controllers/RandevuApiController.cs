@@ -20,7 +20,14 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
         [HttpGet]
         public IActionResult GetRandevular()
         {
-            var randevular = _context.Randevus
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetInt32("UserRole");
+
+            if (userId != null && userRole != null)
+            {
+                if (userRole == 1)
+                {
+                    var randevular = _context.Randevus
                 .Include(r => r.Musteri)
                 .Include(r => r.Calisan)
                 .Include(r => r.Islem)
@@ -35,7 +42,37 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                     r.Onay
                 }).ToList();
 
-            return Ok(randevular);
+                    return Ok(randevular);
+                }
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
         }
+
+        [HttpPut("{randevuId}")]
+        public ActionResult OnaylaRandevu(int randevuId)
+        {
+            // Randevuyu veritabanında bul
+            var randevu = _context.Randevus.FirstOrDefault(r => r.RandevuId == randevuId);
+
+            if (randevu == null)
+            {
+                return NotFound(new { error = "Randevu bulunamadı!" });
+            }
+
+            // Randevu onayını güncelle
+            randevu.Onay = true;
+
+            _context.Randevus.Update(randevu);
+
+            // Veritabanına değişiklikleri kaydet
+            _context.SaveChanges();
+
+            return Ok();
+        }
+
     }
 }
