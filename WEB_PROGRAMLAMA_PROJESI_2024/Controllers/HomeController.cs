@@ -14,6 +14,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context; // DbContext
         public Calisan user;
+        public int userRole2;
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
@@ -22,12 +23,32 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
 
         public IActionResult Anasayfa()
         {
-            return View();
+            if (userRole2 == 1)
+            {
+                ViewBag.Kim = 1;
+                return View();
+            }
+            else if (userRole2 == 3)
+            {
+                ViewBag.Kim = 3;
+                return View();
+            }
+            else { return View(); }
         }
 
         public IActionResult Tarihce()
         {
-            return View();
+            if (userRole2 == 1)
+            {
+                return View();
+            }
+            else if (userRole2 == 3)
+            {
+                ViewBag.Kim = 3;
+                return View();
+            }
+            else { return View(); }
+            
         }
         public IActionResult AdminPanel()
         {
@@ -39,6 +60,8 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 // Sadece adminler bu sayfaya eriþebilir
                 if (userRole == 1)
                 {
+                    userRole2 = 1;
+                    ViewBag.Kim = 1;
                     return View();
                 }
                 return RedirectToAction("Login", "Home");
@@ -62,7 +85,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 // Sadece adminler bu sayfaya eriþebilir
                 if (userRole == 1)
                 {
-
+                    ViewBag.Kim = 1;
                     return View();
                 }
                 return RedirectToAction("Login", "Home");
@@ -122,6 +145,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 // Sadece adminler bu sayfaya eriþebilir
                 if (userRole == 1)
                 {
+                ViewBag.Kim = 1;
                     return View();
                 }
                 return RedirectToAction("Login", "Home");
@@ -179,6 +203,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 if (userRole == 1)
                 {
                     ViewBag.SalonList = new SelectList(_context.Salons.ToList(), "SalonId", "SalonAdi");
+                ViewBag.Kim = 1;
                     return View();
                 }
                 return RedirectToAction("Login", "Home");
@@ -232,6 +257,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                     ViewBag.SalonList = new SelectList(_context.Salons.ToList(), "SalonId", "SalonAdi");
                     ViewBag.IslemList = new SelectList(_context.Islems.ToList(), "IslemId", "IslemAdi");
                     ViewBag.RolList = new SelectList(_context.Rols.ToList(), "RolId", "RolAdi");
+                ViewBag.Kim = 1;
                     return View();
                 }
                 return RedirectToAction("Login", "Home");
@@ -300,6 +326,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear(); // Tüm oturum verilerini temizle
+                ViewBag.Kim = null;
             return RedirectToAction("Anasayfa", "Home");
         }
 
@@ -326,6 +353,8 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 TempData["SuccessMessage"] = "Rol baþarýyla eklendi!";
 
                 // Rol listeleme veya baþka bir sayfaya yönlendirme
+                ViewBag.Kim = 3;
+
                 return RedirectToAction("Login");
             }
             catch (Exception ex)
@@ -358,6 +387,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
             }
 
             // Kullanýcý giriþ yapmýþsa, randevu ekleme sayfasýný göster
+                ViewBag.Kim = 3;
             return View();
         }
 
@@ -374,6 +404,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
 
                 if (user != null) // Kullanýcý bulundu
                 {
+                    ViewBag.Kim = 3;
                     // Oturuma kullanýcý bilgilerini ekle
                     HttpContext.Session.SetInt32("UserId", user.MusteriId);  // Kullanýcý ID'sini sakla
                     HttpContext.Session.SetString("UserName", user.Email);   // Kullanýcý email'ini sakla
@@ -417,6 +448,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 .Where(r => r.MusteriId == userId)
                 .ToList();
 
+                ViewBag.Kim = 3;
             return View(randevular);
         }
 
@@ -427,6 +459,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
             var islemler = _context.Islems.ToList();
             ViewBag.Islemler = new SelectList(islemler, "IslemId", "IslemAdi");
 
+                ViewBag.Kim = 3;
             return View();
         }
 
@@ -490,6 +523,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 })
                 .ToList();
 
+                ViewBag.Kim = 3;
             return Json(calisanlar);
         }
 
@@ -521,6 +555,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 .Include(r => r.Islem)    // Ýþlem bilgilerini de dahil et
                 .ToList();
 
+                ViewBag.Kim = 1;
             return View(tumRandevular);
         }
 
@@ -541,6 +576,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
 
 
             // Tüm randevularý görüntüle
+                ViewBag.Kim = 1;
             return RedirectToAction("TumRandevularýGoruntule");
         }
 

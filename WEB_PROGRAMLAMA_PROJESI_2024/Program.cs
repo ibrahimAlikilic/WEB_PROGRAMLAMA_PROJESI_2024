@@ -11,7 +11,20 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+/*
+// CORS politikalarý ekleniyor
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin() // Tüm kaynaklara izin ver
+              .AllowAnyMethod() // GET, POST, PUT, DELETE gibi tüm metotlara izin ver
+              .AllowAnyHeader(); // Tüm baþlýklara izin ver
+    });
+});
 
+bunu açarsan aþaðýdakini de aç
+*/
 // Oturum hizmetleri ekleniyor
 builder.Services.AddSession(options =>
 {
@@ -36,6 +49,9 @@ else
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// CORS politikasý etkinleþtiriliyor
+//app.UseCors("AllowAll");   // yukarýyý açarsan bunu da aç
 
 // Oturumlar etkinleþtiriliyor
 app.UseSession();
