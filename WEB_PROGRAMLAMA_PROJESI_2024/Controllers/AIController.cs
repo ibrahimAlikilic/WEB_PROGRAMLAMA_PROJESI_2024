@@ -39,7 +39,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 request.AddFile("image_target", tempFilePath);
                 request.AddParameter("hair_type", hairStyle);
 
-                var response = await client.ExecuteAsync(request);
+                var response = await client.ExecuteAsync(request);   
 
                 if (response.IsSuccessful)
                 {
