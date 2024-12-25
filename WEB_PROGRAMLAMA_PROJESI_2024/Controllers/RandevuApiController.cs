@@ -52,6 +52,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
             }
         }
 
+        /*
         [HttpPut("{randevuId}")]
         public ActionResult OnaylaRandevu(int randevuId)
         {
@@ -73,6 +74,6 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
 
             return Ok();
         }
-
+        */
     }
 }
