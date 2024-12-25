@@ -491,8 +491,8 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
 
             if (mevcutRandevu != null)
             {
-                ViewBag.Hata = "Bu saat aralýðýnda seçtiðiniz çalýþan için randevu dolu.";
-                return RedirectToAction("RandevuAlma");
+                TempData["HataMesaji"] = "Bu saatte çalýþan müsait deðil lütfen baþka bir saat aralýðý seçin.";
+                return RedirectToAction("HataMesaji");
             }
 
             // Yeni randevu ekle
@@ -510,6 +510,11 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("RandevuGoruntuleme");
+        }
+
+        public IActionResult HataMesaji()
+        {
+            return View();
         }
 
         public IActionResult GetCalisanlar(int islemId)
