@@ -1,23 +1,27 @@
 ﻿@{
-    ViewData["Title"] = "Saç Stili Uygulama";
+    ViewData["Title"] = "Stil Transferi";
 }
 
 <div class="container">
-    <h1>Saç Stili Uygulama</h1>
-    <form method="post" enctype="multipart/form-data" asp-controller="AI" asp-action="ApplyHairStyle">
+    <h1>Stil Transferi</h1>
+    <form method="post" enctype="multipart/form-data" asp-controller="AI" asp-action="ApplyStyle">
         <div class="mb-3">
-            <label for="imageFile" class="form-label">Görsel Yükle</label>
-            <input type="file" name="imageFile" id="imageFile" class="form-control" required />
+            <label for="contentImage" class="form-label">İçerik Görseli Yükle</label>
+            <input type="file" name="contentImage" id="contentImage" class="form-control" required />
         </div>
+
         <div class="mb-3">
-            <label for="hairStyle" class="form-label">Saç Stili Seç</label>
-            <select name="hairStyle" id="hairStyle" class="form-select" required>
-                <option value="short">Kısa</option>
-                <option value="long">Uzun</option>
-                <option value="curly">Kıvırcık</option>
-                <option value="straight">Düz</option>
+            <label for="styleSelection" class="form-label">Stil Seçimi</label>
+            <select name="selectedStyle" id="styleSelection" class="form-control" required>
+                <option value="" disabled selected>Stil seçiniz</option>
+                <option value="van_gogh">Van Gogh</option>
+                <option value="picasso">Picasso</option>
+                <option value="monet">Monet</option>
+                <option value="abstract_1">Abstract 1</option>
+                <option value="abstract_2">Abstract 2</option>
             </select>
         </div>
-        <button type="submit" class="btn btn-success">Uygula</button>
+
+        <button type="submit" class="btn btn-success">Stil Uygula</button>
     </form>
 </div>

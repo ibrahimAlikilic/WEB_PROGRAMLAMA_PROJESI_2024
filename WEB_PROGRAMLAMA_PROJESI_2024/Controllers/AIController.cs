@@ -1,56 +1,56 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestSharp;
-using System.Text;
 
 namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
 {
     public class AIController : Controller
     {
+        private const string ApiUrl = "https://www.ailabapi.com/api/image/effects/image-style-migration";
+        private const string ApiKey = "kbMFSNOLT94DOG7F05knPEmxImXhNatY2RLtTJeosMUHwzUPcjvQj1GSf3HAdfhn";
+
         public IActionResult Index()
         {
             return View();
         }
+
         [HttpPost]
-        public async Task<IActionResult> ApplyHairStyle(IFormFile imageFile, string hairStyle)
+        public async Task<IActionResult> ApplyStyle(IFormFile contentImage, string selectedStyle)
         {
-            if (imageFile == null || imageFile.Length == 0)
+            if (contentImage == null || contentImage.Length == 0 || string.IsNullOrWhiteSpace(selectedStyle))
             {
-                return BadRequest("Lütfen geçerli bir görsel yükleyin.");
+                return BadRequest("Lütfen bir içerik görseli yükleyin ve stil seçin.");
             }
 
-            // Görseli geçici bir dosyaya kaydet
-            var tempFilePath = Path.GetTempFileName();
+            var contentFilePath = Path.GetTempFileName();
+
             try
             {
-                using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                // İçerik görselini geçici dosyaya kaydet
+                using (var stream = new FileStream(contentFilePath, FileMode.Create))
                 {
-                    await imageFile.CopyToAsync(stream);
+                    await contentImage.CopyToAsync(stream);
                 }
 
-                // API İsteği
-                var options = new RestClientOptions("https://www.ailabapi.com/api/portrait/effects/hairstyle-editor") //https://www.ailabapi.com
-                {
-                    MaxTimeout = -1,
-                };
-                var client = new RestClient(options);
-                var request = new RestRequest("/api/portrait/effects/hairstyle-editor", Method.Post);
-                request.AddHeader("ailabapi-api-key", "kbMFSNOLT94DOG7F05knPEmxImXhNatY2RLtTJeosMUHwzUPcjvQj1GSf3HAdfhn");
-                request.AlwaysMultipartFormData = true;
-                request.AddFile("image_target", tempFilePath);
-                request.AddParameter("hair_type", hairStyle);
+                // RestClient ve RestRequest oluştur
+                var client = new RestClient(ApiUrl);
+                var request = new RestRequest();
 
+                // Header ve form-data ekle
+                request.AddHeader("ailabapi-api-key", ApiKey);
+                request.AddFile("major", contentFilePath);
+                request.AddParameter("style", selectedStyle); // Stil seçimi metin olarak gönderiliyor
+
+                request.Method = Method.Post;
+
+                // API çağrısını yap
                 var response = await client.ExecuteAsync(request);
 
-                if (response.IsSuccessful)
+                if (response.IsSuccessful && response.Content != null)
                 {
                     var jsonResponse = System.Text.Json.JsonDocument.Parse(response.Content);
-                    var base64Image = jsonResponse.RootElement.GetProperty("data").GetProperty("image").GetString();
+                    var resultUrl = jsonResponse.RootElement.GetProperty("data").GetProperty("url").GetString();
 
-                    // Base64 Görseli çöz ve View'e gönder
-                    var imageBytes = Convert.FromBase64String(base64Image);
-                    var imageDataUrl = $"data:image/png;base64,{base64Image}";
-
-                    return View("Result", imageDataUrl);
+                    return View("Result", resultUrl);
                 }
                 else
                 {
@@ -60,9 +60,9 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
             finally
             {
                 // Geçici dosyayı temizle
-                if (System.IO.File.Exists(tempFilePath))
+                if (System.IO.File.Exists(contentFilePath))
                 {
-                    System.IO.File.Delete(tempFilePath);
+                    System.IO.File.Delete(contentFilePath);
                 }
             }
         }
