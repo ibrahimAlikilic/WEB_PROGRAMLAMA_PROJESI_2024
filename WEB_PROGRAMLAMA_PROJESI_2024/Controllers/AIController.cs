@@ -40,21 +40,31 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
                 request.AddFile("image_target", tempFilePath);
                 request.AddParameter("hair_type", hairStyle);
 
-                var response = await client.ExecuteAsync(request);
 
+                //request.AddParameter("hair_type", "201");
+                request.AddParameter("task_type", "hairstyle"); // Gerekli olan task_type parametresi
+
+                var response = await client.ExecuteAsync(request);
                 if (response.IsSuccessful)
                 {
                     var jsonResponse = System.Text.Json.JsonDocument.Parse(response.Content);
                     var base64Image = jsonResponse.RootElement.GetProperty("data").GetProperty("image").GetString();
 
-                    // Base64 Görseli çöz ve View'e gönder
+                    if (string.IsNullOrEmpty(base64Image))
+                    {
+                        return StatusCode(500, "API'den boş bir görsel verisi döndü.");
+                    }
+
                     var imageDataUrl = $"data:image/png;base64,{base64Image}";
                     return View("Result", imageDataUrl);
                 }
                 else
                 {
+                    // API yanıtını detaylı logla
+                    Console.WriteLine("API Yanıtı: " + response.Content);
                     return StatusCode((int)response.StatusCode, "API isteği başarısız oldu: " + response.Content);
                 }
+
             }
             finally
             {
