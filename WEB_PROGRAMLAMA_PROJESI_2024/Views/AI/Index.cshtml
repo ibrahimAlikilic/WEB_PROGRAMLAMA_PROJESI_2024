@@ -1,27 +1,46 @@
-﻿@{
+﻿@* @{
     ViewData["Title"] = "Stil Transferi";
 }
 
 <div class="container">
     <h1>Stil Transferi</h1>
-    <form method="post" enctype="multipart/form-data" asp-controller="AI" asp-action="ApplyStyle">
+    <form method="post" enctype="multipart/form-data" asp-controller="AI" asp-action="Result">
         <div class="mb-3">
             <label for="contentImage" class="form-label">İçerik Görseli Yükle</label>
             <input type="file" name="contentImage" id="contentImage" class="form-control" required />
         </div>
 
         <div class="mb-3">
-            <label for="styleSelection" class="form-label">Stil Seçimi</label>
-            <select name="selectedStyle" id="styleSelection" class="form-control" required>
-                <option value="" disabled selected>Stil seçiniz</option>
-                <option value="van_gogh">Van Gogh</option>
-                <option value="picasso">Picasso</option>
-                <option value="monet">Monet</option>
-                <option value="abstract_1">Abstract 1</option>
-                <option value="abstract_2">Abstract 2</option>
-            </select>
+            <label for="styleSelection" class="form-label">İşlem Numarası</label>
+            <input type="number" name="styleSelection" id="styleSelection" class="form-control" value="201" required />
         </div>
 
         <button type="submit" class="btn btn-success">Stil Uygula</button>
+    </form>
+</div> *@
+@{
+    ViewData["Title"] = "Saç Stili Uygula";
+}
+
+<div class="container">
+    <h1>Saç Stili Uygula</h1>
+    <form method="post" enctype="multipart/form-data" asp-controller="AI" asp-action="ApplyHairStyle">
+        <div class="mb-3">
+            <label for="imageFile" class="form-label">Görsel Yükle</label>
+            <input type="file" name="imageFile" id="imageFile" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="hairStyle" class="form-label">Saç Stili Seçin</label>
+            <select name="hairStyle" id="hairStyle" class="form-control" required>
+                <option value="" disabled selected>Saç stili seçiniz</option>
+                <option value="short_hair">Kısa Saç</option>
+                <option value="long_hair">Uzun Saç</option>
+                <option value="curly_hair">Kıvırcık Saç</option>
+                <option value="straight_hair">Düz Saç</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Stil Uygula</button>
     </form>
 </div>

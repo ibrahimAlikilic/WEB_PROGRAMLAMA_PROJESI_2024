@@ -1,56 +1,55 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestSharp;
+using System.Text;
 
 namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
 {
     public class AIController : Controller
     {
-        private const string ApiUrl = "https://www.ailabapi.com/api/image/effects/image-style-migration";
-        private const string ApiKey = "kbMFSNOLT94DOG7F05knPEmxImXhNatY2RLtTJeosMUHwzUPcjvQj1GSf3HAdfhn";
-
         public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> ApplyStyle(IFormFile contentImage, string selectedStyle)
+        public async Task<IActionResult> ApplyHairStyle(IFormFile imageFile, string hairStyle)
         {
-            if (contentImage == null || contentImage.Length == 0 || string.IsNullOrWhiteSpace(selectedStyle))
+            if (imageFile == null || imageFile.Length == 0)
             {
-                return BadRequest("Lütfen bir içerik görseli yükleyin ve stil seçin.");
+                return BadRequest("Lütfen geçerli bir görsel yükleyin.");
             }
 
-            var contentFilePath = Path.GetTempFileName();
-
+            // Görseli geçici bir dosyaya kaydet
+            var tempFilePath = Path.GetTempFileName();
             try
             {
-                // İçerik görselini geçici dosyaya kaydet
-                using (var stream = new FileStream(contentFilePath, FileMode.Create))
+                using (var stream = new FileStream(tempFilePath, FileMode.Create))
                 {
-                    await contentImage.CopyToAsync(stream);
+                    await imageFile.CopyToAsync(stream);
                 }
 
-                // RestClient ve RestRequest oluştur
-                var client = new RestClient(ApiUrl);
-                var request = new RestRequest();
+                // API İsteği
+                var options = new RestClientOptions("https://www.ailabapi.com")
+                {
+                    MaxTimeout = -1
+                };
+                var client = new RestClient(options);
+                var request = new RestRequest("/api/portrait/effects/hairstyle-editor", Method.Post);
+                request.AddHeader("ailabapi-api-key", "kbMFSNOLT94DOG7F05knPEmxImXhNatY2RLtTJeosMUHwzUPcjvQj1GSf3HAdfhn");
+                request.AlwaysMultipartFormData = true;
+                request.AddFile("image_target", tempFilePath);
+                request.AddParameter("hair_type", hairStyle);
 
-                // Header ve form-data ekle
-                request.AddHeader("ailabapi-api-key", ApiKey);
-                request.AddFile("major", contentFilePath);
-                request.AddParameter("style", selectedStyle); // Stil seçimi metin olarak gönderiliyor
-
-                request.Method = Method.Post;
-
-                // API çağrısını yap
                 var response = await client.ExecuteAsync(request);
 
-                if (response.IsSuccessful && response.Content != null)
+                if (response.IsSuccessful)
                 {
                     var jsonResponse = System.Text.Json.JsonDocument.Parse(response.Content);
-                    var resultUrl = jsonResponse.RootElement.GetProperty("data").GetProperty("url").GetString();
+                    var base64Image = jsonResponse.RootElement.GetProperty("data").GetProperty("image").GetString();
 
-                    return View("Result", resultUrl);
+                    // Base64 Görseli çöz ve View'e gönder
+                    var imageDataUrl = $"data:image/png;base64,{base64Image}";
+                    return View("Result", imageDataUrl);
                 }
                 else
                 {
@@ -60,9 +59,9 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
             finally
             {
                 // Geçici dosyayı temizle
-                if (System.IO.File.Exists(contentFilePath))
+                if (System.IO.File.Exists(tempFilePath))
                 {
-                    System.IO.File.Delete(contentFilePath);
+                    System.IO.File.Delete(tempFilePath);
                 }
             }
         }
