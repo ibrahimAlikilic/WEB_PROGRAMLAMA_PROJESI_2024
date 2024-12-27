@@ -487,7 +487,7 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
 
             // Çakýþma kontrolü
             var mevcutRandevu = _context.Randevus
-                .FirstOrDefault(r => r.CalisanId == calisanId && r.Tarih.Date == tarih.Date && r.SaatAraligi == saatAraligi);
+                .FirstOrDefault(r => r.CalisanId == calisanId && r.Tarih.Date == tarih.Date && r.SaatAraligi == saatAraligi && r.Onay==true);
 
             if (mevcutRandevu != null)
             {
