@@ -1,37 +1,17 @@
-﻿@* @{
-    ViewData["Title"] = "Stil Transferi";
-}
-
-<div class="container">
-    <h1>Stil Transferi</h1>
-    <form method="post" enctype="multipart/form-data" asp-controller="AI" asp-action="Result">
-        <div class="mb-3">
-            <label for="contentImage" class="form-label">İçerik Görseli Yükle</label>
-            <input type="file" name="contentImage" id="contentImage" class="form-control" required />
-        </div>
-
-        <div class="mb-3">
-            <label for="styleSelection" class="form-label">İşlem Numarası</label>
-            <input type="number" name="styleSelection" id="styleSelection" class="form-control" value="201" required />
-        </div>
-
-        <button type="submit" class="btn btn-success">Stil Uygula</button>
-    </form>
-</div> *@
-@{
+﻿@{
     ViewData["Title"] = "Saç Stili Uygula";
 }
 
-<div class="container">
+<div class="container" style="color:white;">
     <h1>Saç Stili Uygula</h1>
     <form method="post" enctype="multipart/form-data" asp-controller="AI" asp-action="ApplyHairStyle">
         <div class="mb-3">
-            <label for="imageFile" class="form-label">Görsel Yükle</label>
+            <label for="imageFile" class="form-label" style="color:white;">Görsel Yükle</label>
             <input type="file" name="imageFile" id="imageFile" class="form-control" required />
         </div>
 
         <div class="mb-3">
-            <label for="hairStyle" class="form-label">Saç Stili Seçin</label>
+            <label for="hairStyle" class="form-label" style="color:white;">Saç Stili Seçin</label>
             <select name="hairStyle" id="hairStyle" class="form-control" required>
                 <option value="" disabled selected>Saç stili seçiniz</option>
                 <option value="short_hair">Kısa Saç</option>
