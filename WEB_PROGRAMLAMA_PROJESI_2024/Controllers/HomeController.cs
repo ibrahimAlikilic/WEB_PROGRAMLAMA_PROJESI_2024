@@ -512,6 +512,23 @@ namespace WEB_PROGRAMLAMA_PROJESI_2024.Controllers
             return RedirectToAction("RandevuGoruntuleme");
         }
 
+        // Randevu alýrken çalýþanýn dolu olduðu vakitler
+        [HttpGet]
+        public IActionResult GetDoluSaatler(int calisanId)
+        {
+            var doluSaatler = _context.Randevus
+                .Where(r => r.CalisanId == calisanId && r.Onay == true)
+                .Select(r => new
+                {
+                    r.Tarih,
+                    r.SaatAraligi
+                })
+                .ToList();
+
+            return Json(doluSaatler);
+        }
+
+
         public IActionResult HataMesaji()
         {
             return View();
